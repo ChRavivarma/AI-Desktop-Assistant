@@ -1,38 +1,319 @@
-# AI Voice Assistant
+# Desktop AI Assistant
 
-<img src="/images/screen.webp" alt="AI Voice Assistant" />
+[![Python](https://img.shields.io/badge/Python-3.13+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Google Gemini](https://img.shields.io/badge/Google-Gemini-4285F4?style=flat-square&logo=google&logoColor=white)](https://ai.google.dev/)
+[![LangChain](https://img.shields.io/badge/LangChain-Framework-green?style=flat-square)](https://python.langchain.com/)
+[![License](https://img.shields.io/badge/License-MIT-black?style=flat-square)](LICENSE)
+
+A multimodal desktop AI assistant that understands both **natural language** and the **visual context of your desktop**.
+
+Unlike conventional chatbots, this assistant continuously listens for voice commands, captures the current desktop, and uses Google's Gemini multimodal models to answer questions about what the user is seeing. Responses are delivered both as text and speech, enabling a natural desktop interaction experience.
+
+---
+
+## Overview
+
+The assistant combines speech recognition, desktop vision, conversational memory, and text-to-speech into a single application.
+
+Typical use cases include:
+
+- Explaining programming errors
+- Understanding source code
+- Summarizing documentation
+- Interpreting charts and graphs
+- Answering questions about webpages
+- Assisting with learning and debugging
+
+The project is designed with modular components, making it easy to extend with automation, browser control, OCR, and additional AI providers.
+
+---
+
+## Demo
+
+> **Coming Soon**
+
+The repository will include:
+
+- Application walkthrough
+- Voice interaction demo
+- Screen understanding examples
+- Architecture visualization
+
+---
 
 ## Features
 
-- Allows you to ask questions and get witty, concise answers about what you're working on
-- Uses webcam to see you, objects held and room around you
-- Uses desktop image feed to see what you're working on
-- Uses multiple AI models to convert text-to-speech, speech-to-text, and answer questions using the images streamed from the webcam and desktop
-- Uses OpenAIs TTS-1, TTS-1-HD or GPT-4o-mini-TTS model to convert text to natural sounding spoken text
-- Uses OpenAIs GTP-4o or Google's Gemini 1.5 Flash model for turning user questions & images into useful help & banter
-- Change the AI Assistant to be more formal, less witty, ask clarifying questions or provide more detailed answers by adjusting the prompt
-- Easy to configure to use [different voices](https://platform.openai.com/docs/guides/text-to-speech) for the AI Assistant to respond with various accents, emotional ranges, intonation, impressions, speed of speech, tone, etc.
-- For example, download this code, run it and ask it to [start improving it's own code](https://tvtropes.org/pmwiki/pmwiki.php/Main/GrewBeyondTheirProgramming)
+### Multimodal Understanding
 
-AI Voice Assistant uses the following technologies:
+- Desktop screenshot analysis using Gemini Vision
+- Context-aware responses based on both text and visual input
+- Session-based conversational memory
 
-- [CV](https://github.com/opencv/opencv-python): A library that includes several hundreds of computer vision algorithms. This project uses VideoCapture class for video capturing from video files, image sequences or cameras and the imencode function that compresses the image and stores it in the memory buffer that is resized to fit the result.
-- [OpenAI Python API library](https://github.com/openai/openai-python): Provides convenient access to the OpenAI REST API from any Python 3.8+ application. The library includes type definitions for all request params and response fields, and offers both synchronous and asynchronous clients powered by [httpx](https://github.com/encode/httpx).
-- [PyTorch](https://pytorch.org/): A python package that provides tensor computation, like [NumPy](https://numpy.org/), with strong GPU acceleration and deep neural networks built on a tape-based autograd system.
-- [TorchAudio](https://github.com/pytorch/audio): Apply PyTorch to the audio domain by providing strong GPU acceleration, having a focus on trainable features through the autograd system, and having consistent style (tensor names and dimension names). Therefore, it is primarily a machine learning library and not a general signal processing library. The benefits of PyTorch can be seen in torchaudio through having all the computations be through PyTorch operations which makes it easy to use and feel like a natural extension.
-- [TorchVision](https://github.com/pytorch/vision): Consists of popular datasets, model architectures, and common image transformations for computer vision.
-- [Whisper](https://github.com/openai/whisper): A general-purpose speech recognition model. It is trained on a large dataset of diverse audio and is also a multitasking model that can perform multilingual speech recognition, speech translation, and language identification.
-- [SoundFile](https://github.com/bastibe/python-soundfile): An audio library based on [libsndfile](http://www.mega-nerd.com/libsndfile/), [CFFI](https://cffi.readthedocs.io/) and [NumPy](https://numpy.org/).
-- [Base64](https://github.com/mayeut/pybase64): Used to encode images sent from webcam & desktop to base64.
-- [Lock](https://github.com/wdbm/lock): Implements advisory file locking that enables concurrent processes to interact with the same file without conflict, provided they first check for the existence of a lock held by a different process.
-- [Thread](https://thread.ngjx.org/docs): Provides out-of-the-box solution with multi-threaded processing and fetching values from a completed thread, etc.
-- [DotEnv](): reads key-value pairs from a .env file and can set them as environment variables. It helps in the development of applications following the [12-factor principles](https://12factor.net/).
-- [LangChain](https://python.langchain.com/): This library aims to assist in the development of truly powerful apps that comes when you can combine them with other sources of computation or knowledge.
-- [LangChain Community](https://python.langchain.com/api_reference/community/index.html): Contains third-party integrations that implement the base interfaces defined in LangChain Core, making them ready-to-use in any LangChain application.
-- [LangChain Core](https://python.langchain.com/api_reference/core/index.html): Contains the base abstractions that power the rest of the LangChain ecosystem. These abstractions are designed to be as modular and simple as possible. Examples of these abstractions include those for language models, document loaders, embedding models, vectorstores, retrievers, and more.
-- [LangChain OpenAI](https://python.langchain.com/docs/integrations/components/): This package contains the LangChain integrations for OpenAI through their openai SDK.
-- [PyAudio](https://people.csail.mit.edu/hubert/pyaudio/): Provides Python bindings for PortAudio v19, the cross-platform audio I/O library. With PyAudio, you can easily use Python to play and record audio on a variety of platforms, such as GNU/Linux, Microsoft Windows, and Apple macOS.
-- [SpeechRecognition](https://github.com/Uberi/speech_recognition/blob/master/reference/library-reference.rst): Library for performing speech recognition, with support for several engines and APIs, online and offline.
-- [FFmpeg](https://python-ffmpeg.readthedocs.io/en/stable/): A python binding for [FFmpeg](https://ffmpeg.org/), a complete, cross-platform solution to record, convert and stream audio and video.
-- [Numba](https://numba.pydata.org/): A just-in-time compiler for numerical functions in python. It uses the LLVM compiler project to generate machine code from Python syntax. Numba can compile a large subset of numerically-focused Python, including many NumPy functions. Additionally, Numba has support for automatic parallelization of loops, generation of GPU-accelerated code, and creation of ufuncs and C callbacks.
-- [More Itertools](https://github.com/more-itertools/more-itertools): A library used to compose elegant solutions for a variety of problems with the functions it provides. A collection of building blocks, recipes, and routines for working with Python iterables.
+### Voice Interaction
+
+- Continuous microphone listening
+- Speech-to-text conversion
+- Offline text-to-speech responses
+- Terminal text input as an alternative
+
+### Computer Vision
+
+- Real-time desktop capture
+- Live webcam preview
+- Modular vision pipeline
+
+### AI Provider Support
+
+The assistant has been designed to support multiple inference providers.
+
+Currently supported:
+
+- Google Gemini
+- OpenAI
+- OpenRouter
+- Groq
+- Ollama (Local)
+
+---
+
+# Architecture
+
+```
+
++-------------------------+
+\| User (Voice / Keyboard) |
++------------+------------+
+|
+v
+Speech Recognition
+|
+v
+Prompt Builder
+|
++----------------------+
+| |
+v v
+Desktop Screenshot Conversation History
+| |
++-----------+----------+
+|
+v
+Gemini Multimodal Model
+|
+v
+Generated Response
+|
++------------------+
+| |
+v v
+Terminal Text Speech Output
+
+```
+
+---
+
+## Technology Stack
+
+| Category | Technologies |
+|----------|--------------|
+| Language | Python 3.13 |
+| AI | Google Gemini API |
+| Framework | LangChain |
+| Vision | OpenCV, Pillow |
+| Speech Recognition | SpeechRecognition |
+| Speech Synthesis | pyttsx3 |
+| Audio | PyAudio |
+| Environment | python-dotenv |
+| Numerical Processing | NumPy |
+
+---
+
+## Project Structure
+
+```
+
+ai-voice-assistant/
+
+├── assistant.py
+├── requirements.txt
+├── .env.example
+├── README.md
+│
+├── docs/
+│ ├── architecture.png
+│ ├── demo.gif
+│ └── screenshots/
+│
+└── assets/
+
+```
+
+---
+
+## Installation
+
+Clone the repository.
+
+```bash
+git clone https://github.com/<username>/desktop-ai-assistant.git
+
+cd desktop-ai-assistant
+```
+
+Create a virtual environment.
+
+Windows
+
+```bash
+python -m venv .venv
+
+.venv\Scripts\activate
+```
+
+Linux/macOS
+
+```bash
+python3 -m venv .venv
+
+source .venv/bin/activate
+```
+
+Install dependencies.
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## Configuration
+
+Create a `.env` file.
+
+```env
+MODEL_PROVIDER=gemini
+
+GOOGLE_API_KEY=YOUR_API_KEY
+
+GEMINI_MODEL=gemini-flash-latest
+
+MICROPHONE_INDEX=1
+```
+
+Obtain a Google AI Studio API key from:
+
+https://aistudio.google.com/
+
+---
+
+## Running
+
+```bash
+python assistant.py
+```
+
+The application initializes:
+
+- Webcam stream
+- Desktop capture
+- AI model
+- Microphone
+- Background listener
+
+You may interact through either:
+
+- Voice
+- Keyboard
+
+---
+
+## Example Prompts
+
+```
+Explain this Python error.
+
+Summarize this webpage.
+
+What is wrong with this code?
+
+Describe this graph.
+
+Explain the algorithm shown on my screen.
+
+What does this exception mean?
+
+Can this code be optimized?
+```
+
+---
+
+## Current Limitations
+
+The assistant currently focuses on multimodal understanding.
+
+Not yet implemented:
+
+- Wake-word activation
+- Internet search
+- Desktop automation
+- Browser control
+- File management
+- Long-term memory
+- OCR pipeline
+- Webcam reasoning
+
+---
+
+## Roadmap
+
+- [ ] Wake-word detection
+- [ ] Browser automation
+- [ ] OCR integration
+- [ ] File assistant
+- [ ] Desktop control
+- [ ] Long-term memory
+- [ ] Calendar integration
+- [ ] Email assistant
+- [ ] Plugin architecture
+- [ ] Streaming AI responses
+
+---
+
+## Security
+
+API keys are loaded through environment variables and are never stored in the repository.
+
+Ensure your `.env` file is included in `.gitignore`.
+
+---
+
+## Contributing
+
+Contributions, issues, and feature requests are welcome.
+
+If you would like to contribute:
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Submit a Pull Request
+
+---
+
+## License
+
+This project is licensed under the MIT License.
+
+---
+
+## Author
+
+**Ravi Varma**
+
+Computer Science Engineering Student
+
+Python Developer • AI Enthusiast
+
+GitHub: https://github.com/<your-username>
+
+LinkedIn: https://linkedin.com/in/<your-profile>
