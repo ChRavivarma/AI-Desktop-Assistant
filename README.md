@@ -308,7 +308,7 @@ This project is licensed under the MIT License.
 
 ## Author
 
-**Ravi Varma**
+**Your_Name**
 
 Computer Science Engineering Student
 
