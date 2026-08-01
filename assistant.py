@@ -241,13 +241,16 @@ class Assistant:
             input_messages_key="prompt",
             history_messages_key="chat_history",
         )
-
+# ============================================================
+# Initialization (shared by terminal app and Streamlit)
+# ============================================================
 
 print("Initializing webcam and desktop screenshot streams...")
 webcam_stream = WebcamStream().start()
 desktop_screenshot = DesktopScreenshot().start()
 
 print("Initializing AI Model...")
+
 provider = os.getenv("MODEL_PROVIDER", "").lower()
 google_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
 openai_key = os.getenv("OPENAI_API_KEY", "")
@@ -258,177 +261,342 @@ model = None
 if provider == "gemini" or (not provider and google_key):
     try:
         from langchain_google_genai import ChatGoogleGenerativeAI
-        gemini_model = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
+
+        gemini_model = os.getenv(
+            "GEMINI_MODEL",
+            "gemini-flash-latest"
+        )
+
         print(f"Using Google Gemini Model ({gemini_model})...")
-        if google_key and not google_key.startswith("AIzaSy"):
-            print("[Notice] Note: Google AI Studio API Keys usually start with 'AIzaSy'.")
+
         model = ChatGoogleGenerativeAI(
             model=gemini_model,
             google_api_key=google_key
         )
+
     except Exception as e:
-        print(f"[Gemini Init Notice] Could not initialize Gemini: {e}")
+        print(f"[Gemini Init Notice] {e}")
 
 if model is None and (provider == "groq" or (not provider and groq_key)):
     try:
         from langchain_groq import ChatGroq
-        groq_model = os.getenv("GROQ_MODEL", "llama-3.2-11b-vision-preview")
+
+        groq_model = os.getenv(
+            "GROQ_MODEL",
+            "llama-3.3-70b-versatile"
+        )
+
         print(f"Using Groq Model ({groq_model})...")
-        model = ChatGroq(model_name=groq_model, groq_api_key=groq_key)
+
+        model = ChatGroq(
+            model_name=groq_model,
+            groq_api_key=groq_key
+        )
+
     except Exception as e:
-        print(f"[Groq Init Notice] Could not initialize Groq: {e}")
+        print(f"[Groq Init Notice] {e}")
 
 if model is None and provider == "ollama":
     try:
         from langchain_community.chat_models import ChatOllama
-        ollama_model = os.getenv("OLLAMA_MODEL", "llama3.2-vision")
-        print(f"Using local Ollama Model ({ollama_model})...")
+
+        ollama_model = os.getenv(
+            "OLLAMA_MODEL",
+            "llama3.2-vision"
+        )
+
         model = ChatOllama(model=ollama_model)
+
     except Exception as e:
-        print(f"[Ollama Init Notice] Could not initialize Ollama: {e}")
+        print(f"[Ollama Init Notice] {e}")
 
 if model is None:
+
     if openai_key.startswith("sk-or-v1-"):
-        openrouter_model = os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini")
-        print(f"Using OpenRouter Model ({openrouter_model})...")
+
+        openrouter_model = os.getenv(
+            "OPENROUTER_MODEL",
+            "openai/gpt-4o-mini"
+        )
+
         model = ChatOpenAI(
             model=openrouter_model,
             openai_api_base="https://openrouter.ai/api/v1",
-            openai_api_key=openai_key
+            openai_api_key=openai_key,
         )
+
     else:
-        openai_model = os.getenv("OPENAI_MODEL", "gpt-4o")
-        print(f"Using OpenAI Model ({openai_model})...")
-        model = ChatOpenAI(model=openai_model, openai_api_key=openai_key)
+
+        openai_model = os.getenv(
+            "OPENAI_MODEL",
+            "gpt-4o"
+        )
+
+        model = ChatOpenAI(
+            model=openai_model,
+            openai_api_key=openai_key,
+        )
 
 assistant = Assistant(model)
 
 
+def ask_ai(prompt):
+
+    screenshot_data = desktop_screenshot.read(
+        encode=True
+    )
+
+    image_str = screenshot_data.decode() if screenshot_data else ""
+
+    response = assistant.chain.invoke(
+        {
+            "prompt": prompt,
+            "image_base64": image_str,
+        },
+        config={
+            "configurable": {
+                "session_id": "streamlit"
+            }
+        },
+    )
+
+    return str(response)
+# ============================================================
+# Voice Callback
+# ============================================================
+
 def audio_callback(recognizer, audio):
+
     print("\n[Audio detected] Processing speech...")
+
     prompt = None
+
     try:
+
         try:
-            prompt = recognizer.recognize_google(audio, language="en-US")
-            print(f"[Speech STT (Google)]: \"{prompt}\"")
+            prompt = recognizer.recognize_google(
+                audio,
+                language="en-US",
+            )
+
+            print(f'[Speech STT (Google)]: "{prompt}"')
+
         except (UnknownValueError, RequestError) as google_err:
+
             try:
-                prompt = recognizer.recognize_whisper(audio, model="base", language="english")
-                print(f"[Speech STT (Whisper)]: \"{prompt}\"")
+
+                prompt = recognizer.recognize_whisper(
+                    audio,
+                    model="base",
+                    language="english",
+                )
+
+                print(f'[Speech STT (Whisper)]: "{prompt}"')
+
             except Exception:
-                print(f"[Audio STT Notice] Could not understand speech: {google_err}")
+
+                print(
+                    f"[Audio STT Notice] Could not understand speech: {google_err}"
+                )
                 return
 
         if prompt and prompt.strip():
+
             print(f"\nUser (Voice): {prompt.strip()}")
-            screenshot_data = desktop_screenshot.read(encode=True)
-            assistant.answer(prompt.strip(), screenshot_data)
+
+            screenshot_data = desktop_screenshot.read(
+                encode=True
+            )
+
+            assistant.answer(
+                prompt.strip(),
+                screenshot_data,
+            )
+
         else:
+
             print("[Audio] No clear speech recognized.")
+
     except Exception as e:
+
         print(f"[Audio Processing Error]: {e}")
 
+def main():
 
-print("\nSetting up microphone...")
-recognizer = Recognizer()
+    print("\nSetting up microphone...")
 
-recognizer.energy_threshold = 150
-recognizer.dynamic_energy_threshold = True
-recognizer.dynamic_energy_adjustment_damping = 0.15
-recognizer.dynamic_energy_ratio = 1.2
-recognizer.pause_threshold = 0.6
-recognizer.phrase_threshold = 0.2
+    recognizer = Recognizer()
 
-mic_names = Microphone.list_microphone_names()
-mic_index_env = os.getenv("MICROPHONE_INDEX")
+    recognizer.energy_threshold = 150
+    recognizer.dynamic_energy_threshold = True
+    recognizer.dynamic_energy_adjustment_damping = 0.15
+    recognizer.dynamic_energy_ratio = 1.2
+    recognizer.pause_threshold = 0.6
+    recognizer.phrase_threshold = 0.2
 
-selected_mic_idx = None
-if mic_index_env is not None and mic_index_env.strip() != "":
-    try:
-        mic_idx = int(mic_index_env.strip())
-        if 0 <= mic_idx < len(mic_names):
-            name = mic_names[mic_idx]
-            if "output" in name.lower() or "speaker" in name.lower() or "headphones" in name.lower():
-                print(f"[Warning] Index {mic_idx} ('{name}') is an output device!")
-            else:
-                selected_mic_idx = mic_idx
-    except ValueError:
-        pass
+    mic_names = Microphone.list_microphone_names()
 
-if selected_mic_idx is None:
-    print("Available audio input devices:")
-    for idx, name in enumerate(mic_names):
-        name_lower = name.lower()
-        if any(kw in name_lower for kw in ["input", "mic", "array"]) and not any(kw in name_lower for kw in ["output", "speaker", "headphones"]):
-            print(f"  Index {idx}: {name}")
-            if selected_mic_idx is None:
+    mic_index_env = os.getenv("MICROPHONE_INDEX")
+
+    selected_mic_idx = None
+
+    if mic_index_env:
+
+        try:
+
+            idx = int(mic_index_env)
+
+            if 0 <= idx < len(mic_names):
+
                 selected_mic_idx = idx
 
-if selected_mic_idx is not None:
-    print(f"Using microphone Index {selected_mic_idx}: {mic_names[selected_mic_idx]}")
-    microphone = Microphone(device_index=selected_mic_idx)
-else:
-    print("Using default microphone device.")
-    microphone = Microphone()
+        except ValueError:
 
-with microphone as source:
-    print("Calibrating ambient noise (0.5s)...")
-    recognizer.adjust_for_ambient_noise(source, duration=0.5)
+            pass
 
-if recognizer.energy_threshold > 500:
-    recognizer.energy_threshold = 300
-print(f"Microphone sensitivity threshold set to: {int(recognizer.energy_threshold)}")
+    if selected_mic_idx is None:
 
-print("Starting background audio listener...")
-stop_listening = recognizer.listen_in_background(microphone, audio_callback)
+        print("Available audio input devices:")
 
-def terminal_input_thread():
-    time.sleep(1.0)
-    print("\n" + "="*65)
-    print("  AI ASSISTANT IS ACTIVE & READY!")
-    print("  1. SPEAK into your mic (voice mode)")
-    print("  2. OR TYPE questions in this terminal and press Enter!")
-    print("  3. Press 'q' or ESC on OpenCV video window to exit.")
-    print("="*65 + "\n")
+        for idx, name in enumerate(mic_names):
 
-    while True:
-        try:
-            user_text = input()
-            if user_text and user_text.strip():
-                clean_text = user_text.strip()
-                if clean_text.lower() in ["exit", "quit"]:
-                    break
-                print(f"\nUser (Typed): {clean_text}")
-                screenshot_data = desktop_screenshot.read(encode=True)
-                assistant.answer(clean_text, screenshot_data)
-        except (EOFError, KeyboardInterrupt):
-            break
+            lower = name.lower()
 
-input_thread = Thread(target=terminal_input_thread, daemon=True)
-input_thread.start()
+            if (
+                any(k in lower for k in ["mic", "array", "input"])
+                and not any(k in lower for k in ["speaker", "output"])
+            ):
 
-try:
-    while True:
-        webcam_frame = webcam_stream.read()
-        if webcam_frame is not None:
-            cv2.imshow("Webcam Stream", webcam_frame)
-            
-        screenshot = desktop_screenshot.read()
-        if screenshot is not None:
-            cv2.imshow("Desktop Screenshot", screenshot)
-            
-        key = cv2.waitKey(30)
-        if key in [27, ord("q")]:
-            break
-except KeyboardInterrupt:
-    print("\nShutdown requested...")
+                print(f"  Index {idx}: {name}")
 
-print("Shutting down assistant...")
-webcam_stream.stop()
-desktop_screenshot.stop()
-cv2.destroyAllWindows()
-try:
-    stop_listening(wait_for_stop=False)
-except Exception:
-    pass
-print("Shutdown complete.")
+                if selected_mic_idx is None:
+
+                    selected_mic_idx = idx
+
+    if selected_mic_idx is not None:
+
+        print(
+            f"Using microphone Index {selected_mic_idx}: {mic_names[selected_mic_idx]}"
+        )
+
+        microphone = Microphone(device_index=selected_mic_idx)
+
+    else:
+
+        print("Using default microphone.")
+
+        microphone = Microphone()
+
+    with microphone as source:
+
+        print("Calibrating ambient noise (0.5s)...")
+
+        recognizer.adjust_for_ambient_noise(
+            source,
+            duration=0.5,
+        )
+
+    if recognizer.energy_threshold > 500:
+
+        recognizer.energy_threshold = 300
+
+    print(
+        f"Microphone sensitivity threshold set to: {int(recognizer.energy_threshold)}"
+    )
+
+    print("Starting background audio listener...")
+
+    stop_listening = recognizer.listen_in_background(
+        microphone,
+        audio_callback,
+    )
+    def terminal_input_thread():
+
+        time.sleep(1.0)
+
+        print("\n" + "=" * 65)
+        print("  AI ASSISTANT IS ACTIVE & READY!")
+        print("  1. SPEAK into your mic (voice mode)")
+        print("  2. OR TYPE questions in this terminal and press Enter!")
+        print("  3. Press 'q' or ESC on OpenCV video window to exit.")
+        print("=" * 65 + "\n")
+
+        while True:
+
+            try:
+
+                user_text = input()
+
+                if user_text and user_text.strip():
+
+                    clean_text = user_text.strip()
+
+                    if clean_text.lower() in ["exit", "quit"]:
+                        break
+
+                    print(f"\nUser (Typed): {clean_text}")
+
+                    screenshot_data = desktop_screenshot.read(
+                        encode=True
+                    )
+
+                    assistant.answer(
+                        clean_text,
+                        screenshot_data,
+                    )
+
+            except (EOFError, KeyboardInterrupt):
+                break
+
+    input_thread = Thread(
+        target=terminal_input_thread,
+        daemon=True,
+    )
+
+    input_thread.start()
+
+    try:
+
+        while True:
+
+            webcam_frame = webcam_stream.read()
+
+            if webcam_frame is not None:
+                cv2.imshow(
+                    "Webcam Stream",
+                    webcam_frame,
+                )
+
+            screenshot = desktop_screenshot.read()
+
+            if screenshot is not None:
+                cv2.imshow(
+                    "Desktop Screenshot",
+                    screenshot,
+                )
+
+            key = cv2.waitKey(30)
+
+            if key in [27, ord("q")]:
+                break
+
+    except KeyboardInterrupt:
+
+        print("\nShutdown requested...")
+
+    print("Shutting down assistant...")
+
+    webcam_stream.stop()
+    desktop_screenshot.stop()
+
+    cv2.destroyAllWindows()
+
+    try:
+        stop_listening(wait_for_stop=False)
+    except Exception:
+        pass
+
+    print("Shutdown complete.")
+
+if __name__ == "__main__":
+        main()
