@@ -1,124 +1,99 @@
-# Desktop AI Assistant
+# 🤖 Desktop AI Assistant
 
 [![Python](https://img.shields.io/badge/Python-3.13+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![Google Gemini](https://img.shields.io/badge/Google-Gemini-4285F4?style=flat-square&logo=google&logoColor=white)](https://ai.google.dev/)
 [![LangChain](https://img.shields.io/badge/LangChain-Framework-green?style=flat-square)](https://python.langchain.com/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-UI-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![License](https://img.shields.io/badge/License-MIT-black?style=flat-square)](LICENSE)
 
-A multimodal desktop AI assistant that understands both **natural language** and the **visual context of your desktop**.
+A modern **multimodal desktop AI assistant** that combines **voice interaction**, **desktop vision**, **webcam awareness**, and **large language models** into a single intelligent application.
 
-Unlike conventional chatbots, this assistant continuously listens for voice commands, captures the current desktop, and uses Google's Gemini multimodal models to answer questions about what the user is seeing. Responses are delivered both as text and speech, enabling a natural desktop interaction experience.
-
----
-
-## Overview
-
-The assistant combines speech recognition, desktop vision, conversational memory, and text-to-speech into a single application.
-
-Typical use cases include:
-
-- Explaining programming errors
-- Understanding source code
-- Summarizing documentation
-- Interpreting charts and graphs
-- Answering questions about webpages
-- Assisting with learning and debugging
-
-The project is designed with modular components, making it easy to extend with automation, browser control, OCR, and additional AI providers.
+Unlike traditional chatbots, this assistant understands the **visual context of your desktop**, allowing it to explain code, summarize webpages, debug errors, and answer questions based on what is currently visible on your screen.
 
 ---
 
-## Demo
+# ✨ Features
 
-> **Coming Soon**
+### 🧠 AI Capabilities
 
-The repository will include:
+- Multimodal reasoning using Google Gemini
+- Context-aware conversations
+- Conversation history
+- Image + text understanding
 
-- Application walkthrough
-- Voice interaction demo
-- Screen understanding examples
-- Architecture visualization
+### 🖥 Desktop Understanding
 
----
+- Live desktop screenshot capture
+- Explain source code
+- Debug programming errors
+- Summarize webpages
+- Interpret charts and graphs
 
-## Features
+### 📷 Vision
 
-### Multimodal Understanding
-
-- Desktop screenshot analysis using Gemini Vision
-- Context-aware responses based on both text and visual input
-- Session-based conversational memory
-
-### Voice Interaction
-
-- Continuous microphone listening
-- Speech-to-text conversion
-- Offline text-to-speech responses
-- Terminal text input as an alternative
-
-### Computer Vision
-
-- Real-time desktop capture
+- Live desktop preview
 - Live webcam preview
-- Modular vision pipeline
+- Real-time screenshot analysis
 
-### AI Provider Support
+### 🎤 Voice Interaction
 
-The assistant has been designed to support multiple inference providers.
+- Continuous speech recognition
+- Keyboard input support
+- Offline Text-to-Speech (pyttsx3)
+- OpenAI TTS support (optional)
 
-Currently supported:
+### 🎨 User Interface
 
-- Google Gemini
-- OpenAI
-- OpenRouter
-- Groq
-- Ollama (Local)
+- Modern Streamlit dashboard
+- Dark theme
+- Chat interface
+- Live desktop preview
+- Live webcam preview
+- Status indicators
 
----
+### 🔌 AI Provider Support
 
-# Architecture
-
-```
-
-+-------------------------+
-\| User (Voice / Keyboard) |
-+------------+------------+
-|
-v
-Speech Recognition
-|
-v
-Prompt Builder
-|
-+----------------------+
-| |
-v v
-Desktop Screenshot Conversation History
-| |
-+-----------+----------+
-|
-v
-Gemini Multimodal Model
-|
-v
-Generated Response
-|
-+------------------+
-| |
-v v
-Terminal Text Speech Output
-
-```
+- ✅ Google Gemini
+- ✅ OpenAI
+- ✅ OpenRouter
+- ✅ Groq
+- ✅ Ollama (Local)
 
 ---
 
-## Technology Stack
+# 🏗 Architecture
+
+```text
+                 Streamlit UI
+                       │
+                       ▼
+               assistant.py Backend
+                       │
+       ┌───────────────┼───────────────┐
+       ▼               ▼               ▼
+ Desktop Capture    Webcam        Voice Input
+       │               │               │
+       └───────────────┼───────────────┘
+                       ▼
+              Prompt Construction
+                       ▼
+          Google Gemini Multimodal API
+                       ▼
+                AI Generated Response
+                       ▼
+             UI + Voice Output (TTS)
+```
+
+---
+
+# 🛠 Technology Stack
 
 | Category | Technologies |
 |----------|--------------|
 | Language | Python 3.13 |
 | AI | Google Gemini API |
 | Framework | LangChain |
+| UI | Streamlit |
 | Vision | OpenCV, Pillow |
 | Speech Recognition | SpeechRecognition |
 | Speech Synthesis | pyttsx3 |
@@ -128,41 +103,41 @@ Terminal Text Speech Output
 
 ---
 
-## Project Structure
+# 📁 Project Structure
 
-```
+```text
+desktop-ai-assistant/
 
-ai-voice-assistant/
-
-├── assistant.py
+│
+├── app.py                 # Streamlit UI
+├── assistant.py           # AI backend
 ├── requirements.txt
-├── .env.example
 ├── README.md
+├── .env.example
 │
-├── docs/
-│ ├── architecture.png
-│ ├── demo.gif
-│ └── screenshots/
+├── assets/
+│   ├── dashboard.png
+│   ├── desktop-preview.png
+│   └── webcam.png
 │
-└── assets/
-
+└── docs/
 ```
 
 ---
 
-## Installation
+# 🚀 Installation
 
 Clone the repository.
 
 ```bash
-git clone https://github.com/<username>/desktop-ai-assistant.git
+git clone https://github.com/<your-username>/desktop-ai-assistant.git
 
 cd desktop-ai-assistant
 ```
 
 Create a virtual environment.
 
-Windows
+### Windows
 
 ```bash
 python -m venv .venv
@@ -170,7 +145,7 @@ python -m venv .venv
 .venv\Scripts\activate
 ```
 
-Linux/macOS
+### Linux / macOS
 
 ```bash
 python3 -m venv .venv
@@ -186,134 +161,139 @@ pip install -r requirements.txt
 
 ---
 
-## Configuration
+# ⚙ Configuration
 
 Create a `.env` file.
 
 ```env
 MODEL_PROVIDER=gemini
 
-GOOGLE_API_KEY=YOUR_API_KEY
+GOOGLE_API_KEY=YOUR_GOOGLE_AI_STUDIO_API_KEY
 
 GEMINI_MODEL=gemini-flash-latest
 
 MICROPHONE_INDEX=1
 ```
 
-Obtain a Google AI Studio API key from:
+Get your API key from:
 
-https://aistudio.google.com/
+https://aistudio.google.com/app/apikey
 
 ---
 
-## Running
+# ▶ Running the Project
+
+### Streamlit Dashboard
+
+```bash
+streamlit run app.py
+```
+
+### Voice Assistant Mode
 
 ```bash
 python assistant.py
 ```
 
-The application initializes:
+The Streamlit interface provides:
 
-- Webcam stream
-- Desktop capture
-- AI model
-- Microphone
-- Background listener
+- Modern dashboard
+- AI chat interface
+- Live desktop preview
+- Live webcam preview
 
-You may interact through either:
+The standalone assistant additionally supports:
 
-- Voice
-- Keyboard
+- Continuous voice interaction
+- Background microphone listener
+- OpenCV preview windows
 
 ---
 
-## Example Prompts
+# 💬 Example Prompts
 
-```
+```text
 Explain this Python error.
 
 Summarize this webpage.
 
-What is wrong with this code?
+What do you see on my screen?
 
-Describe this graph.
+Explain this code.
 
-Explain the algorithm shown on my screen.
-
-What does this exception mean?
+Describe the graph on my desktop.
 
 Can this code be optimized?
+
+What is wrong with this exception?
 ```
 
 ---
 
-## Current Limitations
+# 📸 Screenshots
 
-The assistant currently focuses on multimodal understanding.
+> Screenshots will be added soon.
 
-Not yet implemented:
-
-- Wake-word activation
-- Internet search
-- Desktop automation
-- Browser control
-- File management
-- Long-term memory
-- OCR pipeline
-- Webcam reasoning
+- Dashboard
+- Desktop Preview
+- Webcam Preview
+- AI Conversation
 
 ---
 
-## Roadmap
+# 🚀 Roadmap
 
+- [x] Desktop screenshot understanding
+- [x] Voice interaction
+- [x] Live webcam preview
+- [x] Streamlit dashboard
+- [x] Multi-provider AI support
+- [ ] Native PySide6 desktop application
 - [ ] Wake-word detection
 - [ ] Browser automation
+- [ ] Desktop automation
 - [ ] OCR integration
-- [ ] File assistant
-- [ ] Desktop control
 - [ ] Long-term memory
-- [ ] Calendar integration
-- [ ] Email assistant
 - [ ] Plugin architecture
-- [ ] Streaming AI responses
+- [ ] Windows executable (.exe)
 
 ---
 
-## Security
+# 🔒 Security
 
-API keys are loaded through environment variables and are never stored in the repository.
+API keys are loaded through environment variables and are never committed to the repository.
 
 Ensure your `.env` file is included in `.gitignore`.
 
 ---
 
-## Contributing
+# 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome.
+Contributions, feature requests, and issues are welcome.
 
-If you would like to contribute:
+If you'd like to contribute:
 
 1. Fork the repository
 2. Create a feature branch
 3. Commit your changes
-4. Submit a Pull Request
+4. Open a Pull Request
 
 ---
 
-## License
+# 📄 License
 
 This project is licensed under the MIT License.
 
 ---
 
-## Author
+# 👨‍💻 Author
 
 **Your_Name**
 
-Computer Science Engineering Student
+B.Tech Computer Science Engineering
 
-Python Developer • AI Enthusiast
+Python Developer • AI Enthusiast • Backend Developer
 
-GitHub: https://github.com/<your-username>
+---
 
-LinkedIn: https://linkedin.com/in/<your-profile>
+⭐ If you found this project useful, consider giving it a star!
