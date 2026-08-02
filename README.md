@@ -130,9 +130,9 @@ desktop-ai-assistant/
 Clone the repository.
 
 ```bash
-git clone -b master https://github.com/<your-username>/desktop-ai-assistant.git
+git clone -b master https://github.com/<your-username>/ai-desktop-assistant.git
 
-cd desktop-ai-assistant
+cd ai-desktop-assistant
 ```
 
 Create a virtual environment.
