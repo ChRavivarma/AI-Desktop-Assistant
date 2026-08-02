@@ -130,7 +130,7 @@ desktop-ai-assistant/
 Clone the repository.
 
 ```bash
-git clone https://github.com/<your-username>/desktop-ai-assistant.git
+git clone -b master https://github.com/<your-username>/desktop-ai-assistant.git
 
 cd desktop-ai-assistant
 ```
